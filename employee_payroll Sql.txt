@@ -1,0 +1,234 @@
+Enter password: **************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.24 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| payroll_service    |
+| performance_schema |
+| pets               |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+8 rows in set (0.11 sec)
+
+
+mysql> use payroll_service;
+Database changed
+
+
+ 
+
+mysql> describe employee_payroll;
++--------+--------------+------+-----+---------+----------------+
+| Field  | Type         | Null | Key | Default | Extra          |
++--------+--------------+------+-----+---------+----------------+
+| id     | int unsigned | NO   | PRI | NULL    | auto_increment |
+| name   | varchar(150) | NO   |     | NULL    |                |
+| gender | char(1)      | YES  |     | NULL    |                |
+| salary | double       | NO   |     | NULL    |                |
+| start  | date         | NO   |     | NULL    |                |
++--------+--------------+------+-----+---------+----------------+
+5 rows in set (0.02 sec)
+
+
+
+mysql> INSERT into employee_payroll(name,salary,start)
+    -> values('manish',6536563,'2015-07-02');
+Query OK, 1 row affected (0.12 sec)
+
+mysql> select * from employee_payroll;
++----+--------+--------+----------+------------+
+| id | name   | gender | salary   | start      |
++----+--------+--------+----------+------------+
+|  1 | raj    | M      |  8432478 | 2019-02-03 |
+|  2 | shivam | NULL   | 88432478 | 2020-02-03 |
+|  3 | Abir   | NULL   |   854478 | 2010-04-03 |
+|  4 | Amit   | NULL   |  5432478 | 2017-02-03 |
+|  5 | manish | NULL   |  6536563 | 2015-07-02 |
++----+--------+--------+----------+------------+
+5 rows in set (0.00 sec)
+
+
+
+mysql> SELECT salary FROM employee_payroll
+    -> WHERE name = 'raj';
++---------+
+| salary  |
++---------+
+| 8432478 |
++---------+
+1 row in set (0.00 sec)
+
+
+
+mysql> SELECT * FROM employee_payroll
+    -> WHERE start BETWEEN CAST('2018-01-01' AS DATE)
+    -> AND DATE(NOW());
++----+--------+--------+----------+------------+
+| id | name   | gender | salary   | start      |
++----+--------+--------+----------+------------+
+|  1 | raj    | M      |  8432478 | 2019-02-03 |
+|  2 | shivam | NULL   | 88432478 | 2020-02-03 |
++----+--------+--------+----------+------------+
+2 rows in set (0.00 sec)
+
+
+
+mysql> UPDATE employee_payroll
+    -> SET gender = 'M'
+    -> WHERE name = 'shivam' OR
+    -> name = 'Amit' OR
+    -> name ='Abir' OR
+    -> name = 'manish'
+    -> ;
+Query OK, 4 rows affected (0.10 sec)
+Rows matched: 4  Changed: 4  Warnings: 0
+
+mysql> SELECT * FROM employee_payroll;
++----+--------+--------+----------+------------+
+| id | name   | gender | salary   | start      |
++----+--------+--------+----------+------------+
+|  1 | raj    | M      |  8432478 | 2019-02-03 |
+|  2 | shivam | M      | 88432478 | 2020-02-03 |
+|  3 | Abir   | M      |   854478 | 2010-04-03 |
+|  4 | Amit   | M      |  5432478 | 2017-02-03 |
+|  5 | manish | M      |  6536563 | 2015-07-02 |
++----+--------+--------+----------+------------+
+5 rows in set (0.00 sec)
+
+
+
+mysql> INSERT into employee_payroll(name,gender,salary,start) VALUES
+    -> ("Natalie",'F',175000,'2020-06-18'),
+    -> ('Marie','F',225000,'2019-09-27');
+Query OK, 2 rows affected (0.11 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from employee_payroll;
++----+---------+--------+----------+------------+
+| id | name    | gender | salary   | start      |
++----+---------+--------+----------+------------+
+|  1 | raj     | M      |  8432478 | 2019-02-03 |
+|  2 | shivam  | M      | 88432478 | 2020-02-03 |
+|  3 | Abir    | M      |   854478 | 2010-04-03 |
+|  4 | Amit    | M      |  5432478 | 2017-02-03 |
+|  5 | manish  | M      |  6536563 | 2015-07-02 |
+|  6 | Natalie | F      |   175000 | 2020-06-18 |
+|  7 | Marie   | F      |   225000 | 2019-09-27 |
++----+---------+--------+----------+------------+
+7 rows in set (0.01 sec)
+
+
+
+mysql> SELECT SUM(salary) FROM employee_payroll
+    -> WHERE gender = 'M'
+    -> GROUP BY gender;
++-------------+
+| SUM(salary) |
++-------------+
+|   109688475 |
++-------------+
+1 row in set (0.00 sec)
+
+
+
+mysql> SELECT SUM(salary) FROM employee_payroll
+    -> WHERE gender = 'F'
+    -> GROUP BY gender;
++-------------+
+| SUM(salary) |
++-------------+
+|      400000 |
++-------------+
+1 row in set (0.00 sec)
+
+ 
+
+
+mysql> SELECT AVG(salary) FROM employee_payroll
+    -> WHERE GENDER = 'M'
+    -> ;
++-------------+
+| AVG(salary) |
++-------------+
+|    21937695 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT AVG(salary) FROM employee_payroll
+    ->  WHERE GENDER = 'F';
++-------------+
+| AVG(salary) |
++-------------+
+|      200000 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MIN(salary) FROM employee_payroll
+    -> WHERE gender = 'M';
++-------------+
+| MIN(salary) |
++-------------+
+|      854478 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql>  SELECT MIN(salary) FROM employee_payroll
+    -> WHERE gender = 'F';
++-------------+
+| MIN(salary) |
++-------------+
+|      175000 |
++-------------+
+1 row in set (0.00 sec)
+
+
+
+mysql> SELECT MAX(salary) FROM employee_payroll
+    -> WHERE gender = 'F';
++-------------+
+| MAX(salary) |
++-------------+
+|      225000 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MAX(salary) FROM employee_payroll
+    -> WHERE gender = 'M';
++-------------+
+| MAX(salary) |
++-------------+
+|    88432478 |
++-------------+
+1 row in set (0.00 sec)
+
+
+
+mysql> SELECT COUNT(*) FROM employee_payroll
+    ->  WHERE gender = 'M';
++----------+
+| COUNT(*) |
++----------+
+|        5 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(*) FROM employee_payroll
+    ->  WHERE gender = 'F';
